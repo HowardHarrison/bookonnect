@@ -1,7 +1,26 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  // "files": [],
+  // "references": [
+  //   { "path": "./tsconfig.app.json" },
+  //   { "path": "./tsconfig.node.json" }
+  // ],
+  "compilerOptions": {
+    "jsx": "react-jsx", // or "react" if you're using older React versions
+    "module": "ESNext",
+    "target": "ES6",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": "src",
+    "paths": {
+      "scenes/*": ["scenes/*"]
+    }
+  },
+  "include": ["src"]
 }
