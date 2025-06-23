@@ -4,8 +4,9 @@ import './App.css'
 import { useSelector } from 'react-redux';
 import { useMemo } from 'react';
 import { themeSettings, Mode } from './state/theme';
-import LoginPage from "scenes/loginPage";
 import { RootState } from './main';
+import LoginPage from 'scenes/LoginPage';
+import HomePage from 'scenes/HomePage';
 function App() {
   const mode = useSelector((state: RootState) => state.mode) as Mode;
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
@@ -16,7 +17,8 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline/>
           <Routes>
-            <Route path="/" element={<LoginPage/>}/>
+            <Route path='/' element={<HomePage/>} />
+            <Route path="/login" element={<LoginPage/>}/>
           </Routes>
         </ThemeProvider>
       </BrowserRouter>  

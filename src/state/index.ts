@@ -1,8 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { User } from "types/User";
 
-const initialState = {
+interface AuthState {
+  mode: "light" | "dark";
+  user: User | null;
+  token: string | null;
+  posts: any[]; // You can replace `any` with a proper Post type
+}
+
+const initialState:AuthState = {
     mode: "light",
-    user: null,
+    user:  null,
     token: null,
     posts: [],
 };

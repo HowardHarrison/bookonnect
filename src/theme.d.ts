@@ -5,6 +5,8 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     alt: string;
     medium: string;
+    light: string;
+    dark: string;
   }
 
   interface Palette {
