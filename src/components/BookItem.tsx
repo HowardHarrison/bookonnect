@@ -32,7 +32,7 @@ const BookItem: React.FC<BookItemProps> = ({ id, title, writer, categories, cove
 };
 
   return (
-    <Card sx={{ borderRadius: 2, m: 1, maxWidth: 250 }}>
+    <Card sx={{ borderRadius: 2, m: 1, minWidth: 260 }}>
       <CardActionArea onClick={handleClick}>
         <CardMedia
           component="img"

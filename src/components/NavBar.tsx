@@ -1,4 +1,4 @@
-import { AppBar, Box, Toolbar, Typography, Button, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, Button, IconButton, Avatar, Menu, MenuItem, Container } from "@mui/material";
 import { RootState } from "main";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -25,7 +25,8 @@ const NavBar = () => {
     const handleMenuClose = () => setAnchorEl(null);
 
     return (
-        <AppBar position="static" elevation={0} sx={{ backgroundColor: '#EEEEEE' }}>
+        <AppBar position="fixed" elevation={0} sx={{ backgroundColor: '#EEEEEE' }}>
+            <Container maxWidth="xl">
             <Toolbar sx={{ justifyContent: "space-between" }}>
                 {/* Logo */}
                 <Typography variant="h6" component="div" sx={{ fontWeight: 600, fontSize: 20, color: "#ff2216" }}>
@@ -90,6 +91,7 @@ const NavBar = () => {
                     )}
                 </Box>
             </Toolbar>
+            </Container>
         </AppBar>
     );
 }

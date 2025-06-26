@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import BookItem from "components/BookItem";
 import NavBar from "components/NavBar";
 import { useGetBooksQuery } from "state/bookAPI";
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { useEffect } from 'react';
 const HomePage = () => {
   const { data: books, error, isLoading, refetch } = useGetBooksQuery();
@@ -16,6 +16,7 @@ const HomePage = () => {
   return (
     <div>
       <NavBar />
+      <Container maxWidth="xl">
       <Box
         sx={{
           display: "grid",
@@ -26,14 +27,16 @@ const HomePage = () => {
           },
           gap: 2,
           padding: 2,
+          paddingTop: 9,
         }}
       >
         {books?.map((book) => (
-          <Box key={book.id}>
+          <Box key={book.id} sx={{display:"flex", justifyContent:"center", alignItems: "center"}}>
             <BookItem {...book} />
           </Box>
         ))}
       </Box>
+      </Container>
     </div>
   )
 }
