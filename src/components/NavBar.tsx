@@ -15,8 +15,8 @@ const menuItems = [
 const NavBar = () => {
     const location = useLocation();
     const currentPath = location.pathname;
-    const isAuth = Boolean(useSelector((state: RootState) => state.token));
-    const user = useSelector((state: RootState) => state.user);
+    const isAuth = Boolean(useSelector((state: RootState) => state.auth.token));
+    const user = useSelector((state: RootState) => state.auth.user);
 
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

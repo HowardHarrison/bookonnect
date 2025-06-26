@@ -8,8 +8,8 @@ import { RootState } from './main';
 import LoginPage from 'scenes/LoginPage';
 import HomePage from 'scenes/HomePage';
 function App() {
-  const mode = useSelector((state: RootState) => state.mode) as Mode;
-  const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+  const mode = useSelector((state: RootState) => state.mode);
+  const theme = useMemo(() => createTheme(themeSettings(mode.mode as Mode)), [mode.mode]);
 
   return (
     <div className='app'>
