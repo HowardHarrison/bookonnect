@@ -2,16 +2,21 @@
 import Grid from '@mui/material/Grid';
 import BookItem from "components/BookItem";
 import NavBar from "components/NavBar";
-import { Book } from "types/Book";
 import { useGetBooksQuery } from "state/bookAPI";
 import { Box } from '@mui/material';
+import { useEffect } from 'react';
 const HomePage = () => {
-    const { data: books, error, isLoading } = useGetBooksQuery();
-     console.log('data', books);
-    return (
-        <div>
-            <NavBar />
-            <Box
+  const { data: books, error, isLoading, refetch } = useGetBooksQuery();
+  useEffect(() => {
+    refetch(); 
+  }, []);
+  useEffect(() => {
+    console.log("Fetched books from API:", books);
+  }, [books]);
+  return (
+    <div>
+      <NavBar />
+      <Box
         sx={{
           display: "grid",
           gridTemplateColumns: {
@@ -24,12 +29,12 @@ const HomePage = () => {
         }}
       >
         {books?.map((book) => (
-          <Box key={book._id || book.id}>
+          <Box key={book.id}>
             <BookItem {...book} />
           </Box>
         ))}
       </Box>
-        </div>
-    )
+    </div>
+  )
 }
 export default HomePage;
