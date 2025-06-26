@@ -1,24 +1,14 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography, Chip, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Categories, Writers } from "types/Book";
+import { Book } from "types/Book";
+import { BaseUrl } from "types/Index";
 
-interface BookItemProps {
-  id: string;
-  title: string;
-  writer: Writers;
-  categories: Categories[];
-  coverImage: string;
-}
-
-const BaseUrl = import.meta.env.VITE_BASE_URL as string;
-
-const BookItem: React.FC<BookItemProps> = ({ id, title, writer, categories, coverImage }) => {
+const BookItem: React.FC<Book> = ({ _id, title, writer, categories, coverImage }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/book/${id}`);
+    navigate(`/books/${_id}`);
   };
-  console.log('categories', categories);
 
   const categoryColorMap: Record<string, string> = {
   Romance: "#ffe0e6",

@@ -20,8 +20,8 @@ import {
 import { PersistGate } from "redux-persist/integration/react";
 import { bookApi } from 'state/bookAPI'
 
-const rootReducer = combineReducers({auth: authReducer, mode: modeReducer,[bookApi.reducerPath]: bookApi.reducer,});
-const persistConfig = {key: 'root', storage, version: 1};
+const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, });
+const persistConfig = { key: 'root', storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

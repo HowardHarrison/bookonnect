@@ -5,12 +5,15 @@ const BaseUrl = import.meta.env.VITE_BASE_URL as string;
 
 export const bookApi = createApi({
   reducerPath: 'bookApi',
-  baseQuery: fetchBaseQuery({ baseUrl: `${BaseUrl}` }), // change this when deployed
+  baseQuery: fetchBaseQuery({ baseUrl: `${BaseUrl}` }),
   endpoints: (builder) => ({
     getBooks: builder.query<Book[], void>({
       query: () => '/books',
     }),
+    getBookById: builder.query<Book, string>({
+      query: (id) => `/books/${id}`,
+    }),
   }),
 });
 
-export const { useGetBooksQuery } = bookApi;
+export const { useGetBooksQuery, useGetBookByIdQuery } = bookApi;

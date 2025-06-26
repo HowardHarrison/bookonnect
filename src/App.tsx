@@ -7,6 +7,7 @@ import { themeSettings, Mode } from './state/theme';
 import { RootState } from './main';
 import LoginPage from 'scenes/LoginPage';
 import HomePage from 'scenes/HomePage';
+import DetailPage from 'scenes/HomePage/DetailPage';
 function App() {
   const mode = useSelector((state: RootState) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode.mode as Mode)), [mode.mode]);
@@ -18,6 +19,7 @@ function App() {
           <CssBaseline/>
           <Routes>
             <Route path='/' element={<HomePage/>} />
+            <Route path='/books/:bookID' element={<DetailPage/>} />
             <Route path="/login" element={<LoginPage/>}/>
           </Routes>
         </ThemeProvider>

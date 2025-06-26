@@ -9,7 +9,7 @@ export type Writers = {
 }
 
 export type Book = {
-    id: string;
+    _id: string;
     title: string;
     description: string;
     publishDate: Date | string;
