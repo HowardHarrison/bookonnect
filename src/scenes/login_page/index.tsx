@@ -1,5 +1,5 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material"
-import AuthForm from "./Form";
+import AuthForm from "./LoginForm";
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -14,7 +14,7 @@ const LoginPage = () => {
         p="1rem 6%"
         textAlign="center">
       </Box>
-      <Typography fontWeight="bold" fontSize="32px" color="primary">
+      <Typography fontWeight="bold" fontSize="32px" color="#ff2216" textAlign="center">
         Bookonnect
       </Typography>
 
@@ -23,16 +23,15 @@ const LoginPage = () => {
         sx={{
           backgroundColor: theme.palette.background.alt,
         }}
-        p="2rem"
-        m="2rem auto"
+        p="1rem"
+        m="1rem auto"
         borderRadius="1.5rem"
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
+        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem", textAlign: "center" }}>
           Welcome to Bookonnect, the Social Platform for bibilophiles!
         </Typography>
         <AuthForm />
       </Box>
-      hello world
     </Box>
   )
 }

@@ -1,7 +1,12 @@
 import { Add, ChatBubbleOutline, FavoriteBorder } from "@mui/icons-material";
-import { Box, Chip, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Book } from "types/Book";
 import { BaseUrl } from "types/Index";
+import CommentSection from "./CommentSection";
+import { useSelector } from "react-redux";
+import { RootState } from "main";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -14,6 +19,21 @@ function stringToLightColor(str: string) {
 }
 
 const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage, publishDate, description }) => {
+    const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
+    const navigate = useNavigate();
+
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleProtectedClick = () => {
+        if (!isAuth) {
+            setOpenDialog(true);
+        } else {
+            // perform actual action (like toggling favorite)
+        }
+    };
+
+    const handleClose = () => setOpenDialog(false);
+    const handleLogin = () => navigate('/login');
     return (
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} p={2} gap={3} paddingTop={9}>
             {/* Left: Book Cover */}
@@ -22,7 +42,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                     component="img"
                     src={`${BaseUrl}/assets/${coverImage}`}
                     alt={title}
-                    sx={{ width: '100%', borderRadius: 3 }}
+                    sx={{ width: '100%', borderRadius: 3, aspectRatio: '1/1.8' }}
                 />
             </Box>
 
@@ -54,7 +74,16 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         ))}
                     </Box>
 
-                    <Typography variant="body1" mt={2}>
+                    <Typography variant="body1" sx={{ marginY: 2, overflow: 'auto', maxHeight: '200px' }}>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
                         {/* {description} */}
                     </Typography>
@@ -63,9 +92,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                 {/* Centered & Stretched Action Buttons */}
                 <Box
                     flex={1}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
+                    sx={{ backgroundColor: '' }}
                 >
                     <Box
                         display="flex"
@@ -73,26 +100,50 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         justifyContent="space-around"
                         alignItems="center"
                     >
-                        <Box display="flex" justifyContent="center" alignItems="center" flex={1}  sx={{ backgroundColor: '#EEEEEE' }}>
-                            <IconButton>
-                                <FavoriteBorder />
-                            </IconButton>
-                        </Box>
-                        <Box display="flex" justifyContent="center" alignItems="center" flex={1}  sx={{ backgroundColor: '#EEEEEE' }}>
-                            <IconButton>
-                                <ChatBubbleOutline />
-                            </IconButton>
-                        </Box>
-                        <Box display="flex" justifyContent="center" alignItems="center" flex={1}  sx={{ backgroundColor: '#EEEEEE' }}>
-                            <IconButton>
-                                <Add />
-                            </IconButton>
-                        </Box>
+                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
+                            <FavoriteBorder />
+                        </IconButton>
+                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
+                            <ChatBubbleOutline />
+                        </IconButton>
+                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
+                            <Add />
+                        </IconButton>
+                    </Box>
+                    <Box
+                        width='100%'
+                    >
+                        <CommentSection />
                     </Box>
                 </Box>
-
             </Box>
 
+            <Dialog open={openDialog} onClose={handleClose}>
+                <DialogTitle>You are not logged in</DialogTitle>
+                <DialogContent>
+                    Please log in or sign up to use this feature.
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} 
+                        variant="contained"
+                        sx={{
+                            textTransform: "none",
+                            backgroundColor: "#ff2216",
+                            color: "white",
+                        }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleLogin} 
+                        variant="outlined"
+                        sx={{
+                            textTransform: "none",
+                            color: "#ff2216",
+                            borderColor: "#ff2216",
+                        }}>
+                        Log In
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }

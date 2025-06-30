@@ -67,18 +67,7 @@ const NavBar = () => {
 
                             {!isAuth ? (
                                 <>
-                                    <Button
-                                        component={RouterLink}
-                                        to="/login"
-                                        variant="outlined"
-                                        sx={{
-                                            textTransform: "none",
-                                            color: "#ff2216",
-                                            borderColor: "#ff2216",
-                                        }}
-                                    >
-                                        Log In
-                                    </Button>
+
                                     <Button
                                         component={RouterLink}
                                         to="/signup"
@@ -90,6 +79,18 @@ const NavBar = () => {
                                         }}
                                     >
                                         Sign Up
+                                    </Button>
+                                    <Button
+                                        component={RouterLink}
+                                        to="/login"
+                                        variant="outlined"
+                                        sx={{
+                                            textTransform: "none",
+                                            color: "#ff2216",
+                                            borderColor: "#ff2216",
+                                        }}
+                                    >
+                                        Log In
                                     </Button>
                                 </>
                             ) : (
@@ -149,24 +150,7 @@ const NavBar = () => {
                                         ))}
                                         {!isAuth ? (
                                             <>
-                                                <ListItem
-                                                    component={RouterLink}
-                                                    to="/login"
-                                                >
-                                                    <Button
-                                                        component={RouterLink}
-                                                        to="/login"
-                                                        variant="outlined"
-                                                        sx={{
-                                                            textTransform: "none",
-                                                            color: "#ff2216",
-                                                            borderColor: "#ff2216",
-                                                            width: "80px"
-                                                        }}
-                                                    >
-                                                        Log In
-                                                    </Button>
-                                                </ListItem>
+
                                                 <ListItem
                                                     component={RouterLink}
                                                     to="/signup"
@@ -183,6 +167,24 @@ const NavBar = () => {
                                                         }}
                                                     >
                                                         Sign Up
+                                                    </Button>
+                                                </ListItem>
+                                                <ListItem
+                                                    component={RouterLink}
+                                                    to="/login"
+                                                >
+                                                    <Button
+                                                        component={RouterLink}
+                                                        to="/login"
+                                                        variant="outlined"
+                                                        sx={{
+                                                            textTransform: "none",
+                                                            color: "#ff2216",
+                                                            borderColor: "#ff2216",
+                                                            width: "80px"
+                                                        }}
+                                                    >
+                                                        Log In
                                                     </Button>
                                                 </ListItem>
                                             </>
