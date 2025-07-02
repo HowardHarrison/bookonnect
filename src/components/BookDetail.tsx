@@ -1,4 +1,4 @@
-import { Add, ChatBubbleOutline, FavoriteBorder } from "@mui/icons-material";
+import { Add, ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Book } from "types/Book";
 import { BaseUrl } from "types/Index";
@@ -6,7 +6,8 @@ import CommentSection from "./CommentSection";
 import { useSelector } from "react-redux";
 import { RootState } from "main";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reactionApi";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -20,9 +21,38 @@ function stringToLightColor(str: string) {
 
 const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage, publishDate, description }) => {
     const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
+    const user = useSelector((state: RootState) => state.auth.user);
+    const userId = user?._id;
+    console.log('userId', user);
     const navigate = useNavigate();
 
+    const [toggleReaction] = useToggleReactionMutation();
+    const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
+    console.log('data', data);
+
     const [openDialog, setOpenDialog] = useState(false);
+    const [loveReaction, setLoveReaction] = useState(false);
+
+    useEffect(() => {
+    if (data?.reacted !== undefined) {
+      setLoveReaction(data.reacted);
+    }
+  }, [data]);
+
+    const handleLoveReaction = async () => {
+    if (!isAuth) {
+      setOpenDialog(true);
+      return;
+    }
+
+    try {
+      const res = await toggleReaction({ userId, bookId: _id }).unwrap();
+      await refetch(); 
+      setLoveReaction(res.reacted);
+    } catch (err) {
+      console.error('Failed to toggle reaction', err);
+    }
+  };
 
     const handleProtectedClick = () => {
         if (!isAuth) {
@@ -100,8 +130,8 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         justifyContent="space-around"
                         alignItems="center"
                     >
-                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
-                            <FavoriteBorder />
+                        <IconButton sx={{ backgroundColor: '#EEEEEE', color: loveReaction ? '#ff2216' : '' }} onClick={handleLoveReaction}>
+                            <Favorite />
                         </IconButton>
                         <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
                             <ChatBubbleOutline />
@@ -118,13 +148,14 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                 </Box>
             </Box>
 
+            {/* Dialog Box */}
             <Dialog open={openDialog} onClose={handleClose}>
                 <DialogTitle>You are not logged in</DialogTitle>
                 <DialogContent>
                     Please log in or sign up to use this feature.
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} 
+                    <Button onClick={handleClose}
                         variant="contained"
                         sx={{
                             textTransform: "none",
@@ -133,7 +164,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleLogin} 
+                    <Button onClick={handleLogin}
                         variant="outlined"
                         sx={{
                             textTransform: "none",

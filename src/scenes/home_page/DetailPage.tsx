@@ -12,7 +12,8 @@ import { Book } from "types/Book";
 const DetailPage = () => {
   const { bookID } = useParams();
   const { data: book, isLoading, error, refetch } = useGetBookByIdQuery(bookID!);
-  console.log('data', book);
+  console.log('book', book);
+  console.log('error', error);
   useEffect(() => {
     refetch();
   }, []);

@@ -21,8 +21,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import { bookApi } from 'state/bookAPI'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from "react-hot-toast";
+import { reactionApi } from 'state/reactionApi'
 
-const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, });
+const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, [reactionApi.reducerPath]: reactionApi.reducer});
 const persistConfig = { key: 'root', storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -33,7 +34,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(bookApi.middleware),
+    }).concat(bookApi.middleware, reactionApi.middleware),//).concat(reactionApi.middleware),
 })
 
 createRoot(document.getElementById('root')!).render(
