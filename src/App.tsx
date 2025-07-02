@@ -7,7 +7,7 @@ import { themeSettings, Mode } from './state/theme';
 import { RootState } from './main';
 import LoginPage from 'scenes/login_page';
 import HomePage from 'scenes/home_page';
-import DetailPage from 'scenes/home_page/DetailPage';
+import DetailPage from 'scenes/detail_page/DetailPage';
 import RegisterForm from 'scenes/signup_page/RegisterForm';
 import NetworkStatus from 'scenes/common/NetworkStatus';
 import Router from 'routes/Router';

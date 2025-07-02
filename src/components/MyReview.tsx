@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "main"; // Adjust the import to your store setup
 
-interface Comment {
+interface Review {
     id: string;
     user: {
         name: string;
@@ -21,7 +21,7 @@ interface Comment {
     createdAt: string;
 }
 
-const mockComments: Comment[] = [
+const mockComments: Review[] = [
     {
         id: "1",
         user: { name: "Alice", avatarUrl: "" },
@@ -49,14 +49,14 @@ const mockComments: Comment[] = [
 ];
 
 const CommentSection: React.FC = () => {
-    const [comments, setComments] = useState<Comment[]>(mockComments);
+    const [comments, setComments] = useState<Review[]>(mockComments);
     const [newComment, setNewComment] = useState("");
     const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
     const user = useSelector((state: RootState) => state.auth.user);
 
     const handleCommentSubmit = () => {
         if (!newComment.trim()) return;
-        const newEntry: Comment = {
+        const newEntry: Review = {
             id: Date.now().toString(),
             user: {
                 name: user?.firstName || "Anonymous",
@@ -72,7 +72,7 @@ const CommentSection: React.FC = () => {
     return (
         <Box mt={1}>
             <Typography variant="h6" gutterBottom>
-                Comments
+                My Review
             </Typography>
             <Stack spacing={2} sx={{height:'200px', overflow: 'auto'}}>
                 {comments.map((comment) => (

@@ -2,7 +2,7 @@ import { Add, ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Book } from "types/Book";
 import { BaseUrl } from "types/Index";
-import CommentSection from "./CommentSection";
+import CommentSection from "./MyReview";
 import { useSelector } from "react-redux";
 import { RootState } from "main";
 import { useNavigate } from "react-router-dom";

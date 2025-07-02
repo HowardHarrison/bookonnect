@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import NotFound from "scenes/common/NotFound";
 import HomePage from "scenes/home_page";
-import DetailPage from "scenes/home_page/DetailPage";
+import DetailPage from "scenes/detail_page/DetailPage";
 import LoginPage from "scenes/login_page";
 import RegisterForm from "scenes/signup_page/RegisterForm";
 
