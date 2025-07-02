@@ -8,6 +8,7 @@ import { RootState } from "main";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reactionApi";
+import MyReview from "./MyReview";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -34,25 +35,25 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
     const [loveReaction, setLoveReaction] = useState(false);
 
     useEffect(() => {
-    if (data?.reacted !== undefined) {
-      setLoveReaction(data.reacted);
-    }
-  }, [data]);
+        if (data?.reacted !== undefined) {
+            setLoveReaction(data.reacted);
+        }
+    }, [data]);
 
     const handleLoveReaction = async () => {
-    if (!isAuth) {
-      setOpenDialog(true);
-      return;
-    }
+        if (!isAuth) {
+            setOpenDialog(true);
+            return;
+        }
 
-    try {
-      const res = await toggleReaction({ userId, bookId: _id }).unwrap();
-      await refetch(); 
-      setLoveReaction(res.reacted);
-    } catch (err) {
-      console.error('Failed to toggle reaction', err);
-    }
-  };
+        try {
+            const res = await toggleReaction({ userId, bookId: _id }).unwrap();
+            await refetch();
+            setLoveReaction(res.reacted);
+        } catch (err) {
+            console.error('Failed to toggle reaction', err);
+        }
+    };
 
     const handleProtectedClick = () => {
         if (!isAuth) {
@@ -64,16 +65,31 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
 
     const handleClose = () => setOpenDialog(false);
     const handleLogin = () => navigate('/login');
+    
     return (
-        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} p={2} gap={3} paddingTop={9}>
-            {/* Left: Book Cover */}
-            <Box flex={1}>
-                <Box
-                    component="img"
-                    src={`${BaseUrl}/assets/${coverImage}`}
-                    alt={title}
-                    sx={{ width: '100%', borderRadius: 3, aspectRatio: '1/1.8' }}
-                />
+        <Box 
+          display="flex"
+          flexDirection={{ xs: 'column', md: 'row' }}
+          alignItems={{ xs: 'center', md: 'flex-start' }} // Center horizontally on small screens
+          p={2}
+          gap={3}
+          pt={9}>
+          {/* Left: Book Cover */}
+            <Box flex={1}
+              width="100%"
+              display="flex"
+              justifyContent={{ xs: 'center', md: 'flex-start' }}>
+              <Box
+                component="img"
+                src={`${BaseUrl}/assets/${coverImage}`}
+                alt={title}
+                sx={{
+                    width: '100%',
+                    maxWidth: '500px',
+                    borderRadius: 3,
+                    aspectRatio: '1/1.8',
+                }}
+              />
             </Box>
 
             {/* Right: Details */}
@@ -143,7 +159,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                     <Box
                         width='100%'
                     >
-                        <CommentSection />
+                        <MyReview bookId={_id} />
                     </Box>
                 </Box>
             </Box>

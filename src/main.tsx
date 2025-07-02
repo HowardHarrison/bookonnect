@@ -22,8 +22,9 @@ import { bookApi } from 'state/bookAPI'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from "react-hot-toast";
 import { reactionApi } from 'state/reactionApi'
+import { reviewApi } from 'state/reviewApi'
 
-const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, [reactionApi.reducerPath]: reactionApi.reducer});
+const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, [reactionApi.reducerPath]: reactionApi.reducer, [reviewApi.reducerPath]: reviewApi.reducer,});
 const persistConfig = { key: 'root', storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -34,7 +35,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(bookApi.middleware, reactionApi.middleware),//).concat(reactionApi.middleware),
+    }).concat(bookApi.middleware, reactionApi.middleware, reviewApi.middleware),//).concat(reactionApi.middleware),
 })
 
 createRoot(document.getElementById('root')!).render(
