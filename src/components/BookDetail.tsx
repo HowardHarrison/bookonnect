@@ -2,13 +2,13 @@ import { Add, ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Book } from "types/Book";
 import { BaseUrl } from "types/Index";
-import CommentSection from "./MyReview";
 import { useSelector } from "react-redux";
 import { RootState } from "main";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reactionApi";
-import MyReview from "./MyReview";
+import MyReview, { MyReviewRef } from "./MyReview";
+import ReviewSection from "./ReviewSection";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -24,12 +24,13 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
     const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
     const user = useSelector((state: RootState) => state.auth.user);
     const userId = user?._id;
-    console.log('userId', user);
+    // console.log('userId', user);
     const navigate = useNavigate();
+    const myReviewRef = useRef<MyReviewRef>(null);
 
     const [toggleReaction] = useToggleReactionMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
-    console.log('data', data);
+    // console.log('data', data);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [loveReaction, setLoveReaction] = useState(false);
@@ -45,7 +46,6 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             setOpenDialog(true);
             return;
         }
-
         try {
             const res = await toggleReaction({ userId, bookId: _id }).unwrap();
             await refetch();
@@ -54,6 +54,14 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             console.error('Failed to toggle reaction', err);
         }
     };
+
+    const handleComment = async () => {
+        if (!isAuth) {
+            setOpenDialog(true);
+            return;
+        }
+        myReviewRef.current?.triggerEdit();
+    }
 
     const handleProtectedClick = () => {
         if (!isAuth) {
@@ -65,31 +73,32 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
 
     const handleClose = () => setOpenDialog(false);
     const handleLogin = () => navigate('/login');
-    
+
     return (
-        <Box 
-          display="flex"
-          flexDirection={{ xs: 'column', md: 'row' }}
-          alignItems={{ xs: 'center', md: 'flex-start' }} // Center horizontally on small screens
-          p={2}
-          gap={3}
-          pt={9}>
-          {/* Left: Book Cover */}
+        <Box>
+        <Box
+            display="flex"
+            flexDirection={{ xs: 'column', md: 'row' }}
+            alignItems={{ xs: 'center', md: 'flex-start' }} // Center horizontally on small screens
+            p={2}
+            gap={3}
+            pt={9}>
+            {/* Left: Book Cover */}
             <Box flex={1}
-              width="100%"
-              display="flex"
-              justifyContent={{ xs: 'center', md: 'flex-start' }}>
-              <Box
-                component="img"
-                src={`${BaseUrl}/assets/${coverImage}`}
-                alt={title}
-                sx={{
-                    width: '100%',
-                    maxWidth: '500px',
-                    borderRadius: 3,
-                    aspectRatio: '1/1.8',
-                }}
-              />
+                width="100%"
+                display="flex"
+                justifyContent={{ xs: 'center', md: 'flex-start' }}>
+                <Box
+                    component="img"
+                    src={`${BaseUrl}/assets/${coverImage}`}
+                    alt={title}
+                    sx={{
+                        width: '100%',
+                        maxWidth: '500px',
+                        borderRadius: 3,
+                        aspectRatio: '1/1.8',
+                    }}
+                />
             </Box>
 
             {/* Right: Details */}
@@ -121,17 +130,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                     </Box>
 
                     <Typography variant="body1" sx={{ marginY: 2, overflow: 'auto', maxHeight: '200px' }}>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusamus sunt iusto voluptas quam exercitationem qui, dicta earum ex ipsa ea, distinctio blanditiis corporis porro labore?
-                        {/* {description} */}
+                        {description}
                     </Typography>
                 </Box>
 
@@ -149,7 +148,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         <IconButton sx={{ backgroundColor: '#EEEEEE', color: loveReaction ? '#ff2216' : '' }} onClick={handleLoveReaction}>
                             <Favorite />
                         </IconButton>
-                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
+                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
                             <ChatBubbleOutline />
                         </IconButton>
                         <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
@@ -159,12 +158,16 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                     <Box
                         width='100%'
                     >
-                        <MyReview bookId={_id} />
+                        <MyReview ref={myReviewRef} bookId={_id} />
                     </Box>
                 </Box>
             </Box>
+        </Box>
 
-            {/* Dialog Box */}
+        <Box>
+            <ReviewSection bookId={_id}/>
+        </Box>
+        {/* Dialog Box */}
             <Dialog open={openDialog} onClose={handleClose}>
                 <DialogTitle>You are not logged in</DialogTitle>
                 <DialogContent>

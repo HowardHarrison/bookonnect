@@ -11,7 +11,7 @@ export const bookApi = createApi({
       query: () => '/books',
     }),
     getBookById: builder.query<Book, string>({
-      query: (id) => `/books/${id}`,
+      query: (bookID) => `/books/${encodeURIComponent(bookID)}`,
     }),
   }),
 });

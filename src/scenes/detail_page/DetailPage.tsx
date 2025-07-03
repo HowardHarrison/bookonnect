@@ -11,12 +11,27 @@ import { Book } from "types/Book";
 
 const DetailPage = () => {
   const { bookID } = useParams();
-  const { data: book, isLoading, error, refetch } = useGetBookByIdQuery(bookID!);
+  const { data: book, isLoading, error, refetch } = useGetBookByIdQuery(bookID!, {
+  skip: !bookID,
+});
   console.log('book', book);
+  console.log('bookID',bookID ,"typeof:", typeof bookID);
+console.log("Sanitized bookID:", JSON.stringify(bookID));
   console.log('error', error);
   useEffect(() => {
-    refetch();
-  }, []);
+  if (bookID) {
+    console.log("Trying to fetch book:", bookID);
+  }
+}, [bookID]);
+  // useEffect(() => {
+  //   refetch();
+  // }, []);
+//   useEffect(() => {
+//   fetch("http://localhost:3001/books/685636ba9ddf61d16dbc8826")
+//     .then(res => res.json())
+//     .then(data => console.log("Manual fetch:", data))
+//     .catch(err => console.error("Manual fetch error:", err));
+// }, []);
 
   return (
     <div>

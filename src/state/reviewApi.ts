@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BaseUrl } from "types/Index";
-import { Review } from "types/Review";
+import { AllReview, Review } from "types/Review";
 
 export const reviewApi = createApi({
   reducerPath: "reviewApi",
@@ -25,8 +25,11 @@ export const reviewApi = createApi({
     }),
 
     // ✅ Get All Reviews for a Book
-    getReviewsByBook: builder.query<Review[], string>({
+    getReviewsByBook: builder.query<AllReview[], string>({
       query: (bookId) => `/reviews/book/${bookId}`,
+      transformResponse: (response: any) => {
+        return response;
+      },
       providesTags: (result, error, bookId) => [{ type: "Review", id: bookId }],
     }),
 
