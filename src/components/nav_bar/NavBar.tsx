@@ -4,6 +4,7 @@ import { RootState } from "main";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { BaseUrl } from "types/Index";
 
 const menuItems = [
     { name: "Home", path: "/" },
@@ -97,7 +98,7 @@ const NavBar = () => {
                                 <>
                                     <IconButton onClick={handleMenuOpen}>
                                         <Avatar
-                                            src={user?.profileImage}
+                                            src={user?.profileImage ? `${BaseUrl}/${user?.profileImage}` : `${BaseUrl}/assets/profile.jpg`}
                                             alt={user?.firstName}
                                             sx={{ border: "2px solid #ff2216" }}
                                         />

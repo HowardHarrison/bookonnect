@@ -1,5 +1,5 @@
 import { Box, Typography, Stack, Avatar, Divider } from "@mui/material";
-import { useGetReviewsByBookQuery } from "../state/reviewApi";
+import { useGetReviewsByBookQuery } from "../../state/reviewApi";
 import { Star } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useEffect } from "react";

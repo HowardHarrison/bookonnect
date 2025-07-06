@@ -9,7 +9,7 @@ import LoginPage from 'scenes/login_page';
 import HomePage from 'scenes/home_page';
 import DetailPage from 'scenes/detail_page/DetailPage';
 import RegisterForm from 'scenes/signup_page/RegisterForm';
-import NetworkStatus from 'scenes/common/NetworkStatus';
+import NetworkStatus from 'components/common/NetworkStatus';
 import Router from 'routes/Router';
 function App() {
   const mode = useSelector((state: RootState) => state.mode);

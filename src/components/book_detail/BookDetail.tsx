@@ -30,7 +30,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
 
     const [toggleReaction] = useToggleReactionMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
-    // console.log('data', data);
+    console.log('data', data);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [loveReaction, setLoveReaction] = useState(false);
@@ -165,7 +165,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
         </Box>
 
         <Box>
-            <ReviewSection bookId={_id}/>
+            {/* <ReviewSection bookId={_id}/> */}
         </Box>
         {/* Dialog Box */}
             <Dialog open={openDialog} onClose={handleClose}>

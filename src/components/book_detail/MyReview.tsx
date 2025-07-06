@@ -18,7 +18,7 @@ import {
     useDeleteReviewMutation,
     useGetUserReviewQuery,
     useUpsertReviewMutation,
-} from "../state/reviewApi";
+} from "../../state/reviewApi";
 import { Delete, EditDocument, Star } from "@mui/icons-material";
 import dayjs from "dayjs";
 

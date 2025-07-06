@@ -1,12 +1,19 @@
-// import { Grid } from "@mui/material";
-import Grid from '@mui/material/Grid';
-import BookItem from "components/BookItem";
-import NavBar from "components/NavBar";
+
+
 import { useGetBooksQuery } from "state/bookAPI";
 import { Box, Container } from '@mui/material';
 import { useEffect } from 'react';
+import BookItem from "components/book_detail/BookItem";
+import NavBar from "components/nav_bar/NavBar";
+import { useSelector } from "react-redux";
+import { RootState } from "main";
 const HomePage = () => {
   const { data: books, error, isLoading, refetch } = useGetBooksQuery();
+  console.log('books', books);
+  console.log('error', error);
+  console.log('isLoading', isLoading);
+  const token = useSelector((state: RootState) => state.auth.token);
+  console.log('token', token);
   
   useEffect(() => {
     refetch();

@@ -1,13 +1,13 @@
 
 import { Widgets } from "@mui/icons-material";
 import { Box, Container } from "@mui/material";
-import BookDetail from "components/BookDetail";
-import NavBar from "components/NavBar";
+import NavBar from "components/nav_bar/NavBar";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Loading from "scenes/common/Loading";
+import Loading from "components/common/Loading";
 import { useGetBookByIdQuery } from "state/bookAPI";
 import { Book } from "types/Book";
+import BookDetail from "components/book_detail/BookDetail";
 
 const DetailPage = () => {
   const { bookID } = useParams();
@@ -16,6 +16,7 @@ const DetailPage = () => {
 });
   console.log('book', book);
   console.log('bookID',bookID ,"typeof:", typeof bookID);
+  console.log('loading',isLoading);
 console.log("Sanitized bookID:", JSON.stringify(bookID));
   console.log('error', error);
   useEffect(() => {
