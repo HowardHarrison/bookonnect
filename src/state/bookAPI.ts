@@ -13,7 +13,12 @@ export const bookApi = createApi({
     getBookById: builder.query<Book, string>({
       query: (bookID) => `/books/${encodeURIComponent(bookID)}`,
     }),
+    getSavedBooks: builder.query<Book[], string[]>({
+      query: (ids) => ({
+        url: `/books/saved-books?ids=${ids.join(',')}`,
+      }),
+    }),
   }),
 });
 
-export const { useGetBooksQuery, useGetBookByIdQuery } = bookApi;
+export const { useGetBooksQuery, useGetBookByIdQuery, useGetSavedBooksQuery } = bookApi;

@@ -1,9 +1,8 @@
-// src/state/userApi.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from 'main';
+import { Book } from 'types/Book';
 import { BaseUrl } from 'types/Index';
 import { User } from 'types/User';
-
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -17,11 +16,23 @@ export const userApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ['User'],
   endpoints: (builder) => ({
     getUserProfile: builder.query<User, string>({
-      query: (userId) => `/${userId}`, 
+      query: (userId) => `/${userId}`,
+      providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
+    }),
+    removeSavedBook: builder.mutation<User, { userId?: string; bookId: string }>({
+      query: ({ userId, bookId }) => ({
+        url: `/${userId}/remove-saved-book`,
+        method: 'PATCH',
+        body: { bookId },
+      }),
+      invalidatesTags: (result, error, { userId }) => [
+        { type: 'User', id: userId },
+      ],
     }),
   }),
 });
 
-export const { useGetUserProfileQuery } = userApi;
+export const { useGetUserProfileQuery, useRemoveSavedBookMutation } = userApi;

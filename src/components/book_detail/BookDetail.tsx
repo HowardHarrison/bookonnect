@@ -1,4 +1,4 @@
-import { Add, ChatBubbleOutline, Favorite } from "@mui/icons-material";
+import { Add, AddAlarm, AddAlert, AddAPhoto, AddBox, AddBoxOutlined, AddBoxRounded, AddBoxSharp, AddBusiness, AddCard, AddCircle, AddCircleRounded, ChatBubbleOutline, Favorite } from "@mui/icons-material";
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Book } from "types/Book";
 import { BaseUrl } from "types/Index";
@@ -34,6 +34,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
 
     const [openDialog, setOpenDialog] = useState(false);
     const [loveReaction, setLoveReaction] = useState(false);
+    const [saveBook, setSaveBook] = useState(false);
 
     useEffect(() => {
         if (data?.reacted !== undefined) {
@@ -54,6 +55,18 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             console.error('Failed to toggle reaction', err);
         }
     };
+
+    const handleSaveBook = async () => {
+        if (!isAuth) {
+            setOpenDialog(true);
+            return;
+        }
+        try {
+            setSaveBook(!saveBook);
+        } catch (err) {
+            console.error('Failed to toggle reaction', err);
+        }
+    }
 
     const handleComment = async () => {
         if (!isAuth) {
@@ -151,8 +164,8 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                         <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
                             <ChatBubbleOutline />
                         </IconButton>
-                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleProtectedClick}>
-                            <Add />
+                        <IconButton sx={{ backgroundColor: '#EEEEEE', color: saveBook ? '#00ab41' : ''}} onClick={handleSaveBook}>
+                            <AddCircle width={20}/>
                         </IconButton>
                     </Box>
                     <Box

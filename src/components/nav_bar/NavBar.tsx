@@ -8,7 +8,6 @@ import { BaseUrl } from "types/Index";
 
 const menuItems = [
     { name: "Home", path: "/" },
-    { name: "Books", path: "/books" },
     { name: "Authors", path: "/authors" },
     { name: "About Us", path: "/about-us" },
 ];

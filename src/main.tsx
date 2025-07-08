@@ -27,7 +27,7 @@ import { userApi } from 'state/userApi'
 
 const rootReducer = combineReducers({ auth: authReducer, mode: modeReducer, [bookApi.reducerPath]: bookApi.reducer, [reactionApi.reducerPath]: reactionApi.reducer, [reviewApi.reducerPath]: reviewApi.reducer, [userApi.reducerPath]: userApi.reducer
   });
-const persistConfig = { key: 'root', storage, version: 1 };
+const persistConfig = { key: 'root', storage, version: 1, blacklist: ['bookApi', 'userApi', 'reactionApi', 'reviewApi'] };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
