@@ -4,10 +4,12 @@ import { RootState } from "main";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useGetUserProfileQuery } from "state/userApi";
 import { BaseUrl } from "types/Index";
 
 const menuItems = [
     { name: "Home", path: "/" },
+    { name: 'Categories', path: "/categories"},
     { name: "Authors", path: "/authors" },
     { name: "About Us", path: "/about-us" },
 ];
@@ -18,7 +20,8 @@ const NavBar = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     const isAuth = Boolean(useSelector((state: RootState) => state.auth.token));
-    const user = useSelector((state: RootState) => state.auth.user);
+    const userId = useSelector((state: RootState) => state.auth.user?._id);
+    const { data: user } = useGetUserProfileQuery(userId ?? '', { skip: !userId });
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
