@@ -9,12 +9,7 @@ type ReviewSectionProps = {
 };
 
 const ReviewSection = ({ bookId }: ReviewSectionProps) => {
-    const {
-        data: reviews = [],
-        isLoading,
-        error,
-        refetch,
-    } = useGetReviewsByBookQuery(bookId, {
+    const { data: reviews = [], isLoading, error, refetch, } = useGetReviewsByBookQuery(bookId, {
         selectFromResult: (result) => ({
             ...result,
             data: result.data?.map((review) => ({
@@ -31,10 +26,6 @@ const ReviewSection = ({ bookId }: ReviewSectionProps) => {
     if (isLoading) return <Typography>Loading reviews...</Typography>;
     if (error) return <Typography color="error">Failed to load reviews</Typography>;
     if (!reviews.length) return <Typography>No reviews yet.</Typography>;
-
-    useEffect(() => {
-        if (bookId) refetch();
-    }, [bookId]);
 
     return (
         <Box mt={4}>

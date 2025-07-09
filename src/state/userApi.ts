@@ -22,9 +22,9 @@ export const userApi = createApi({
       query: (userId) => `/${userId}`,
       providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
     }),
-    removeSavedBook: builder.mutation<User, { userId?: string; bookId: string }>({
+    handleSavedBook: builder.mutation<User, { userId?: string; bookId: string }>({
       query: ({ userId, bookId }) => ({
-        url: `/${userId}/remove-saved-book`,
+        url: `/${userId}/toggle-book`,
         method: 'PATCH',
         body: { bookId },
       }),
@@ -35,4 +35,4 @@ export const userApi = createApi({
   }),
 });
 
-export const { useGetUserProfileQuery, useRemoveSavedBookMutation } = userApi;
+export const { useGetUserProfileQuery, useHandleSavedBookMutation } = userApi;

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetSavedBooksQuery } from 'state/bookAPI';
-import { useGetUserProfileQuery, useRemoveSavedBookMutation } from 'state/userApi';
+import { useGetUserProfileQuery, useHandleSavedBookMutation } from 'state/userApi';
 import { BaseUrl } from 'types/Index';
 
 const ProfilePage = () => {
@@ -25,7 +25,7 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const userId = useSelector((state: RootState) => state.auth.user?._id);
   const { data: user, isLoading, error, refetch: refetchUserProfile } = useGetUserProfileQuery(userId ?? '', { skip: !userId });
-  const [removeSavedBook] = useRemoveSavedBookMutation();
+  const [handleSavedBook] = useHandleSavedBookMutation();
   const [savedBookIds, setSavedBookIds] = useState<string[]>([]);
   const shouldFetch = Array.isArray(savedBookIds) && savedBookIds.length > 0;
   const { data: savedBooks, isLoading: booksLoading, refetch: refetchBooksByIds } = useGetSavedBooksQuery(savedBookIds,{skip: !shouldFetch});
@@ -186,7 +186,7 @@ const ProfilePage = () => {
                   const handleRemove = async (event: React.MouseEvent) => {
                     event.stopPropagation();
                     try {
-                      await removeSavedBook({ userId: user?._id, bookId: book._id }).unwrap();
+                      await handleSavedBook({ userId: user?._id, bookId: book._id }).unwrap();
                       // Refetch profile, then update state
                       const result = await refetchUserProfile();
                       const updatedUser = result.data;

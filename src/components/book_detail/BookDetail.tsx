@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reactionApi";
 import MyReview, { MyReviewRef } from "./MyReview";
 import ReviewSection from "./ReviewSection";
+import { useGetUserProfileQuery, useHandleSavedBookMutation } from "state/userApi";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -22,13 +23,13 @@ function stringToLightColor(str: string) {
 
 const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage, publishDate, description }) => {
     const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
-    const user = useSelector((state: RootState) => state.auth.user);
-    const userId = user?._id;
-    // console.log('userId', user);
+    const userId = useSelector((state: RootState) => state.auth.user?._id);
+    const { data: user, isLoading, error, refetch: refetchUserProfile } = useGetUserProfileQuery(userId ?? '', { skip: !userId });
     const navigate = useNavigate();
     const myReviewRef = useRef<MyReviewRef>(null);
 
     const [toggleReaction] = useToggleReactionMutation();
+    const [handleSavedBook] = useHandleSavedBookMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
     console.log('data', data);
 
@@ -41,6 +42,14 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             setLoveReaction(data.reacted);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (user?.savedBooks && _id) {
+            const isSaved = user.savedBooks.includes(_id);
+            setSaveBook(isSaved);
+        }
+    }, [user?.savedBooks, _id]);
+
 
     const handleLoveReaction = async () => {
         if (!isAuth) {
@@ -62,7 +71,8 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             return;
         }
         try {
-            setSaveBook(!saveBook);
+            await handleSavedBook({ userId, bookId: _id }).unwrap();
+            setSaveBook(prev => !prev);
         } catch (err) {
             console.error('Failed to toggle reaction', err);
         }
@@ -76,111 +86,103 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
         myReviewRef.current?.triggerEdit();
     }
 
-    const handleProtectedClick = () => {
-        if (!isAuth) {
-            setOpenDialog(true);
-        } else {
-            // perform actual action (like toggling favorite)
-        }
-    };
-
     const handleClose = () => setOpenDialog(false);
     const handleLogin = () => navigate('/login');
 
     return (
         <Box>
-        <Box
-            display="flex"
-            flexDirection={{ xs: 'column', md: 'row' }}
-            alignItems={{ xs: 'center', md: 'flex-start' }} // Center horizontally on small screens
-            p={2}
-            gap={3}
-            pt={9}>
-            {/* Left: Book Cover */}
-            <Box flex={1}
-                width="100%"
+            <Box
                 display="flex"
-                justifyContent={{ xs: 'center', md: 'flex-start' }}>
-                <Box
-                    component="img"
-                    src={`${BaseUrl}/assets/${coverImage}`}
-                    alt={title}
-                    sx={{
-                        width: '100%',
-                        maxWidth: '500px',
-                        borderRadius: 3,
-                        aspectRatio: '1/1.8',
-                    }}
-                />
-            </Box>
-
-            {/* Right: Details */}
-            <Box flex={2} display="flex" flexDirection="column">
-                <Box>
-                    <Typography variant="h4" fontWeight="bold" gutterBottom>
-                        {title}
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-                        by {writer.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Published on {new Date(publishDate).toLocaleDateString()}
-                    </Typography>
-
-                    {/* Categories */}
-                    <Box display="flex" gap={1} flexWrap="wrap" my={1}>
-                        {categories.map((cat) => (
-                            <Chip
-                                key={cat._id}
-                                label={cat.name}
-                                size="small"
-                                sx={{
-                                    backgroundColor: `${stringToLightColor(cat.name)}33`,
-                                    color: '#333',
-                                }}
-                            />
-                        ))}
-                    </Box>
-
-                    <Typography variant="body1" sx={{ marginY: 2, overflow: 'auto', maxHeight: '200px' }}>
-                        {description}
-                    </Typography>
+                flexDirection={{ xs: 'column', md: 'row' }}
+                alignItems={{ xs: 'center', md: 'flex-start' }} // Center horizontally on small screens
+                p={2}
+                gap={3}
+                pt={9}>
+                {/* Left: Book Cover */}
+                <Box flex={1}
+                    width="100%"
+                    display="flex"
+                    justifyContent={{ xs: 'center', md: 'flex-start' }}>
+                    <Box
+                        component="img"
+                        src={`${BaseUrl}/assets/${coverImage}`}
+                        alt={title}
+                        sx={{
+                            width: '100%',
+                            maxWidth: '500px',
+                            borderRadius: 3,
+                            aspectRatio: '1/1.8',
+                        }}
+                    />
                 </Box>
 
-                {/* Centered & Stretched Action Buttons */}
-                <Box
-                    flex={1}
-                    sx={{ backgroundColor: '' }}
-                >
-                    <Box
-                        display="flex"
-                        width="100%"
-                        justifyContent="space-around"
-                        alignItems="center"
-                    >
-                        <IconButton sx={{ backgroundColor: '#EEEEEE', color: loveReaction ? '#ff2216' : '' }} onClick={handleLoveReaction}>
-                            <Favorite />
-                        </IconButton>
-                        <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
-                            <ChatBubbleOutline />
-                        </IconButton>
-                        <IconButton sx={{ backgroundColor: '#EEEEEE', color: saveBook ? '#00ab41' : ''}} onClick={handleSaveBook}>
-                            <AddCircle width={20}/>
-                        </IconButton>
+                {/* Right: Details */}
+                <Box flex={2} display="flex" flexDirection="column">
+                    <Box>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            {title}
+                        </Typography>
+                        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                            by {writer.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                            Published on {new Date(publishDate).toLocaleDateString()}
+                        </Typography>
+
+                        {/* Categories */}
+                        <Box display="flex" gap={1} flexWrap="wrap" my={1}>
+                            {categories.map((cat) => (
+                                <Chip
+                                    key={cat._id}
+                                    label={cat.name}
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: `${stringToLightColor(cat.name)}33`,
+                                        color: '#333',
+                                    }}
+                                />
+                            ))}
+                        </Box>
+
+                        <Typography variant="body1" sx={{ marginY: 2, overflow: 'auto', maxHeight: '200px' }}>
+                            {description}
+                        </Typography>
                     </Box>
+
+                    {/* Centered & Stretched Action Buttons */}
                     <Box
-                        width='100%'
+                        flex={1}
+                        sx={{ backgroundColor: '' }}
                     >
-                        <MyReview ref={myReviewRef} bookId={_id} />
+                        <Box
+                            display="flex"
+                            width="100%"
+                            justifyContent="space-around"
+                            alignItems="center"
+                        >
+                            <IconButton sx={{ backgroundColor: '#EEEEEE', color: loveReaction ? '#ff2216' : '' }} onClick={handleLoveReaction}>
+                                <Favorite />
+                            </IconButton>
+                            <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
+                                <ChatBubbleOutline />
+                            </IconButton>
+                            <IconButton sx={{ backgroundColor: '#EEEEEE', color: saveBook ? '#00ab41' : '' }} onClick={handleSaveBook}>
+                                <AddCircle width={20} />
+                            </IconButton>
+                        </Box>
+                        <Box
+                            width='100%'
+                        >
+                            <MyReview ref={myReviewRef} bookId={_id} />
+                        </Box>
                     </Box>
                 </Box>
             </Box>
-        </Box>
 
-        <Box>
-            {/* <ReviewSection bookId={_id}/> */}
-        </Box>
-        {/* Dialog Box */}
+            <Box>
+                <ReviewSection bookId={_id}/>
+            </Box>
+            {/* Dialog Box */}
             <Dialog open={openDialog} onClose={handleClose}>
                 <DialogTitle>You are not logged in</DialogTitle>
                 <DialogContent>
