@@ -28,7 +28,7 @@ const ReviewSection = ({ bookId }: ReviewSectionProps) => {
     if (!reviews.length) return <Typography>No reviews yet.</Typography>;
 
     return (
-        <Box mt={4}>
+        <Box mt={4} px={2}>
             <Typography variant="h6" gutterBottom>
                 All Reviews
             </Typography>

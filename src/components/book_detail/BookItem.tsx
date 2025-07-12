@@ -19,7 +19,7 @@ const BookItem: React.FC<Book> = ({ _id, title, writer, categories, coverImage }
   Adventure: "#e8f5e9",
   // fallback default
   Default: "#eeeeee",
-};
+  };
 
   return (
     <Card sx={{ borderRadius: 2, m: 1, minWidth: 260 }}>

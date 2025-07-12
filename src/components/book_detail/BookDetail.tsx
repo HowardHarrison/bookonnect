@@ -10,6 +10,7 @@ import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reac
 import MyReview, { MyReviewRef } from "./MyReview";
 import ReviewSection from "./ReviewSection";
 import { useGetUserProfileQuery, useHandleSavedBookMutation } from "state/userApi";
+import { useGetReviewsByBookQuery } from "state/reviewApi";
 
 // Helper to generate light color from string
 function stringToLightColor(str: string) {
@@ -19,7 +20,18 @@ function stringToLightColor(str: string) {
     }
     const h = hash % 360;
     return `hsl(${h}, 90%, 85%)`;
-}
+} 
+
+const categoryColorMap: Record<string, string> = {
+  Romance: "#ffe0e6",
+  Drama: "#e0f7fa",
+  Biography: "#fff9c4",
+  Translation: "#e1f5fe",
+  Action: "#f3e5f5",
+  Adventure: "#e8f5e9",
+  // fallback default
+  Default: "#eeeeee",
+};
 
 const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage, publishDate, description }) => {
     const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
@@ -31,7 +43,9 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
     const [toggleReaction] = useToggleReactionMutation();
     const [handleSavedBook] = useHandleSavedBookMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
-    console.log('data', data);
+    const { data: reviews } = useGetReviewsByBookQuery(_id);
+    console.log('reaction status', data);
+    console.log('reviews', reviews?.length);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [loveReaction, setLoveReaction] = useState(false);
@@ -117,13 +131,13 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                 </Box>
 
                 {/* Right: Details */}
-                <Box flex={2} display="flex" flexDirection="column">
+                <Box flex={2} display="flex" flexDirection="column" sx={{width: '100%'}} p={2}>
                     <Box>
                         <Typography variant="h4" fontWeight="bold" gutterBottom>
                             {title}
                         </Typography>
-                        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-                            by {writer.name}
+                        <Typography variant="subtitle1" color="text.primary" gutterBottom>
+                            by <strong>{writer.name}</strong>
                         </Typography>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
                             Published on {new Date(publishDate).toLocaleDateString()}
@@ -137,7 +151,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                                     label={cat.name}
                                     size="small"
                                     sx={{
-                                        backgroundColor: `${stringToLightColor(cat.name)}33`,
+                                        backgroundColor: categoryColorMap[cat.name] || categoryColorMap["Default"],
                                         color: '#333',
                                     }}
                                 />
@@ -160,9 +174,14 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                             justifyContent="space-around"
                             alignItems="center"
                         >
+                            <Box display="flex" alignItems="center" gap={1}>
                             <IconButton sx={{ backgroundColor: '#EEEEEE', color: loveReaction ? '#ff2216' : '' }} onClick={handleLoveReaction}>
                                 <Favorite />
                             </IconButton>
+                            <Typography color="textSecondary" sx={{fontSize: 15}}>
+                                {reviews?.length ?? 0}
+                            </Typography>
+                            </Box>
                             <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
                                 <ChatBubbleOutline />
                             </IconButton>
@@ -180,7 +199,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
             </Box>
 
             <Box>
-                <ReviewSection bookId={_id}/>
+                <ReviewSection bookId={_id} />
             </Box>
             {/* Dialog Box */}
             <Dialog open={openDialog} onClose={handleClose}>
