@@ -6,16 +6,8 @@ const SignupPage = () => {
   const theme = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   return (
-    <Box>
-      <Box
-        width="100%"
-        sx={{
-          backgroundColor: theme.palette.background.alt,
-        }}
-        p="1rem 6%"
-        textAlign="center">
-      </Box>
-      <Typography fontWeight="bold" fontSize="32px" color="#ff2216" textAlign="center">
+    <Box paddingY="20px">
+      <Typography fontWeight="bold" fontSize="32px" color="#ff2216" textAlign="center" marginY="10px">
         Bookonnect
       </Typography>
 

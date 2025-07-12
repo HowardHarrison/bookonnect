@@ -6,11 +6,14 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import UploadImage from "components/image_cropper/UploadImage";
 import { Formik, FormikHelpers } from "formik";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setLogin } from "state";
 import { RegisterValues } from "types/Form";
+import { BaseUrl } from "types/Index";
 import * as yup from "yup";
 
 const registerSchema = yup.object().shape({
@@ -18,7 +21,7 @@ const registerSchema = yup.object().shape({
   lastName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
-  picture: yup.string(),
+  profileImage: yup.string(),
 });
 
 const initialValuesRegister: RegisterValues = {
@@ -26,19 +29,44 @@ const initialValuesRegister: RegisterValues = {
   lastName: "",
   email: "",
   password: "",
-  picture: "",
+  profileImage: "",
 };
 
 const RegisterForm = () => {
-const [pageType, setPageType] = useState<"login" | "register">("login");
-  const isLogin = pageType === "login";
-  const isRegister = pageType === "register";
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
   const palette = theme.palette;
   const isNonMobile = useMediaQuery("(min-width:600px)");
+
+  const [previewImage, setPreviewImage] = useState<string | null>("");
+  const [image, setImage] = useState<File | null>(null);
+  const editImage = false;
+  const maxBytes = 3145728;
+  const [formValues, setFormValues] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  });
+
+  const handleImageDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  }, []);
+
+  const cancelImage = () => {
+    setImage(null);
+    setPreviewImage("");
+  };
+
+  const reuploadImage = (file: File) => {
+    setImage(file);
+    setPreviewImage(URL.createObjectURL(file));
+  };
 
   const handleRegister = async (
     values: RegisterValues,
@@ -50,11 +78,11 @@ const [pageType, setPageType] = useState<"login" | "register">("login");
       formData.append(key, value instanceof File ? value : String(value));
     });
 
-    if (values.picture instanceof File) {
-      formData.append("picturePath", values.picture.name);
+    if (image instanceof File) {
+      formData.append("profileImage", image);
     }
 
-    const response = await fetch("http://localhost:3001/register", {
+    const response = await fetch(`${BaseUrl}/register`, {
       method: "POST",
       body: formData,
     });
@@ -63,115 +91,147 @@ const [pageType, setPageType] = useState<"login" | "register">("login");
     onSubmitProps.resetForm();
 
     if (savedUser) {
-      setPageType("login");
+      dispatch(setLogin({ user: savedUser.user, token: savedUser.token }));
+      navigate('/');
     }
   };
-  return(
+  return (
     <Formik
-          initialValues={initialValuesRegister}
-          validationSchema={registerSchema}
-          onSubmit={handleRegister}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            resetForm,
-          }) => (
-            <form onSubmit={handleSubmit}>
-              <Box
-                display="grid"
-                gap="30px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-                sx={{
-                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-                }}
-              >
-                <TextField
-                  label="First Name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.firstName}
-                  name="firstName"
-                  error={Boolean(touched.firstName) && Boolean(errors.firstName)}
-                  helperText={touched.firstName && errors.firstName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-                <TextField
-                  label="Last Name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.lastName}
-                  name="lastName"
-                  error={Boolean(touched.lastName) && Boolean(errors.lastName)}
-                  helperText={touched.lastName && errors.lastName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-                <TextField
-                  label="Email"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
-                  name="email"
-                  error={Boolean(touched.email) && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                  sx={{ gridColumn: "span 4" }}
-                />
-                <TextField
-                  label="Password"
-                  type="password"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.password}
-                  name="password"
-                  error={Boolean(touched.password) && Boolean(errors.password)}
-                  helperText={touched.password && errors.password}
-                  sx={{ gridColumn: "span 4" }}
-                />
-                <Box
-                  gridColumn="span 4"
-                  borderRadius="5px"
-                  p="1rem"
-                  sx={{
-                    border: `1px solid ${theme.palette.grey[400]}`, // fallback from palette.neutral.medium
-                  }}
-                >
-                  {/* Dropzone logic could go here */}
-                  {/* Skipped for now since you commented it out */}
-                </Box>
-              </Box>
-    
-              <Button
-                fullWidth
-                type="submit"
-                sx={{
-                  m: "2rem 0",
-                  p: "1rem",
-                  backgroundColor: '#ff2216',
-                  color: '#ffffff',
-                }}
-              >
-                REGISTER
-              </Button>
-              <Typography
-                onClick={() => {
-                  setPageType("login");
-                  resetForm();
-                }}
-                sx={{
-                  textDecoration: "underline",
-                  color: "#ff2216",
-                  "&:hover": { cursor: "pointer", color: '#ff2216' },
-                }}
-              >
-                Already have an account? Login here.
-              </Typography>
-            </form>
-          )}
-        </Formik>
+      initialValues={initialValuesRegister}
+      validationSchema={registerSchema}
+      onSubmit={handleRegister}
+    >
+      {({
+        values,
+        errors,
+        touched,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+        resetForm,
+      }) => (
+        <form onSubmit={handleSubmit}>
+          <Box
+            display="grid"
+            gap="30px"
+            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            sx={{
+              "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+               "& label.Mui-focused": {
+                  color: "#1c1c1c",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                },
+            }}
+          >
+            <TextField
+              label="First Name"
+              name="firstName"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.firstName}
+              error={Boolean(touched.firstName && errors.firstName)}
+              helperText={touched.firstName && errors.firstName}
+              sx={{
+                gridColumn: "span 2"
+               
+              }}
+            />
+            <TextField
+              label="Last Name"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.lastName}
+              name="lastName"
+              error={Boolean(touched.lastName) && Boolean(errors.lastName)}
+              helperText={touched.lastName && errors.lastName}
+              sx={{ gridColumn: "span 2" }}
+            />
+            <TextField
+              label="Email"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.email}
+              name="email"
+              error={Boolean(touched.email) && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
+              sx={{ gridColumn: "span 4" }}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.password}
+              name="password"
+              error={Boolean(touched.password) && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
+              sx={{ gridColumn: "span 4" }}
+            />
+            <input type="password" name="fake_password" style={{ display: 'none' }} autoComplete="new-password" />
+            <Box
+              gridColumn="span 4"
+              borderRadius="5px"
+              p="1rem"
+              sx={{
+                border: `1px solid ${theme.palette.grey[400]}`, // fallback from palette.neutral.medium
+                "& label.Mui-focused": {
+                  color: "#1c1c1c",
+                },
+              }}
+            >
+              <UploadImage
+                label="Image"
+                maxSize={maxBytes}
+                accept={{ "image/*": [] }}
+                file={image}
+                setImage={(file) => setImage(file)}
+                onDrop={handleImageDrop}
+                cancelImage={cancelImage}
+                aspectRatio={1 / 1}
+                reuploadImage={reuploadImage}
+                editImage={editImage}
+              />
+            </Box>
+          </Box>
+
+          <Button
+            fullWidth
+            type="submit"
+            sx={{
+              m: "2rem 0",
+              p: "1rem",
+              backgroundColor: '#ff2216',
+              color: '#ffffff',
+            }}
+          >
+            REGISTER
+          </Button>
+          <Typography
+            onClick={() => {
+              resetForm();
+              navigate('/login');
+            }}
+            sx={{
+              textDecoration: "underline",
+              color: "#ff2216",
+              "&:hover": { cursor: "pointer", color: '#ff2216' },
+            }}
+          >
+            Already have an account? Login here.
+          </Typography>
+        </form>
+      )}
+    </Formik>
   )
 }
 

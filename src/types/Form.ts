@@ -3,7 +3,7 @@ export type RegisterValues = {
   lastName: string;
   email: string;
   password: string;
-  picture: File | string; // usually a File object after Dropzone
+  profileImage: File | string; // usually a File object after Dropzone
 };
 
 export type LoginValues = {

@@ -1,15 +1,16 @@
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { AppBar, Box, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar, Container, Drawer, List, ListItem, ListItemText, useTheme, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Avatar, Container, Drawer, List, ListItem, ListItemText, useTheme, useMediaQuery, ListItemButton } from "@mui/material";
 import { RootState } from "main";
 import React from "react";
-import { useSelector } from "react-redux";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useGetUserProfileQuery } from "state/userApi";
 import { BaseUrl } from "types/Index";
+import { setLogout } from '../../state/index';
 
 const menuItems = [
     { name: "Home", path: "/" },
-    { name: 'Categories', path: "/categories"},
+    { name: 'Categories', path: "/categories" },
     { name: "Authors", path: "/authors" },
     { name: "About Us", path: "/about-us" },
 ];
@@ -26,10 +27,18 @@ const NavBar = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
-        setAnchorEl(event.currentTarget);
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
     const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(setLogout());
+        localStorage.clear();
+        navigate('/login');
+    };
 
     return (
         <AppBar position="fixed" elevation={0} sx={{ backgroundColor: "#EEEEEE" }}>
@@ -118,7 +127,14 @@ const NavBar = () => {
                                         >
                                             Profile
                                         </MenuItem>
-                                        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+                                        <MenuItem
+                                            onClick={() => {
+                                                handleMenuClose();
+                                                handleLogout();
+                                            }}
+                                        >
+                                            Logout
+                                        </MenuItem>
                                     </Menu>
                                 </>
                             )}
@@ -201,14 +217,17 @@ const NavBar = () => {
                                                 }} component={RouterLink} to="/profile">
                                                     <ListItemText primary="Profile" />
                                                 </ListItem>
-                                                <ListItem sx={{
-                                                    textTransform: "none",
-                                                    fontSize: 16,
-                                                    fontWeight: 400,
-                                                    color: "inherit",
-                                                }}>
+                                                <ListItemButton
+                                                    onClick={handleLogout}
+                                                    sx={{
+                                                        textTransform: "none",
+                                                        fontSize: 16,
+                                                        fontWeight: 400,
+                                                        color: "inherit",
+                                                    }}
+                                                >
                                                     <ListItemText primary="Logout" />
-                                                </ListItem>
+                                                </ListItemButton>
                                             </>
                                         )}
                                     </List>

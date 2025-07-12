@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setLogin } from "state";
 import { LoginValues, RegisterValues } from "types/Form";
+import { BaseUrl } from "types/Index";
 import * as yup from "yup";
 
 const loginSchema = yup.object().shape({
@@ -19,24 +20,12 @@ const loginSchema = yup.object().shape({
   password: yup.string().required("required"),
 });
 
-const initialValuesRegister: RegisterValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  picture: "",
-};
-
 const initialValuesLogin: LoginValues = {
   email: "",
   password: "",
 };
 
 const LoginForm = () => {
-  const [pageType, setPageType] = useState<"login" | "register">("login");
-  const isLogin = pageType === "login";
-  const isRegister = pageType === "register";
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -47,7 +36,7 @@ const LoginForm = () => {
     values: LoginValues,
     onSubmitProps: FormikHelpers<LoginValues>
   ) => {
-    const response = await fetch("http://localhost:3001/login", {
+    const response = await fetch(`${BaseUrl}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
@@ -58,7 +47,7 @@ const LoginForm = () => {
 
     if (loggedIn) {
       dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
-      navigate("/home");
+      navigate('/');
     }
   };
 
@@ -94,7 +83,23 @@ const LoginForm = () => {
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
+              sx={{
+                gridColumn: "span 4",
+                "& label.Mui-focused": {
+                  color: "#1c1c1c",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                },
+              }}
             />
             <TextField
               label="Password"
@@ -105,8 +110,24 @@ const LoginForm = () => {
               name="password"
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
-              sx={{ gridColumn: "span 4" }}
+              sx={{
+                gridColumn: "span 4", "& label.Mui-focused": {
+                  color: "#1c1c1c",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#1c1c1c",
+                  },
+                },
+              }}
             />
+            {/* <input type="password" name="fake_password" style={{ display: 'none' }} autoComplete="new-password" /> */}
           </Box>
 
           <Button
@@ -124,8 +145,8 @@ const LoginForm = () => {
           </Button>
           <Typography
             onClick={() => {
-              setPageType("register");
               resetForm();
+              navigate('/signup');
             }}
             sx={{
               textDecoration: "underline",
