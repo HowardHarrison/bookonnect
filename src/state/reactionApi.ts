@@ -17,12 +17,16 @@ export const reactionApi = createApi({
     }),
 
     getReactionStatus: builder.query<
-      { reacted: boolean },
+      { reacted: boolean; totalReactions: number },
       { userId?: string; bookId: string }
     >({
-      query: ({ userId, bookId }) =>
-        `/reactions/status?userId=${userId}&bookId=${bookId}`,
-      transformResponse: (response: { reacted: boolean }) => response,
+      query: ({ userId, bookId }) => ({
+        url: `/reactions/status?userId=${userId}&bookId=${bookId}`,
+      }),
+      transformResponse: (response: any) => ({
+        reacted: response.reacted,
+        totalReactions: response.totalReactions,
+      }),
     }),
   }),
 });

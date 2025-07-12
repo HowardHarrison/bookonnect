@@ -43,9 +43,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
     const [toggleReaction] = useToggleReactionMutation();
     const [handleSavedBook] = useHandleSavedBookMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
-    const { data: reviews } = useGetReviewsByBookQuery(_id);
     console.log('reaction status', data);
-    console.log('reviews', reviews?.length);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [loveReaction, setLoveReaction] = useState(false);
@@ -179,7 +177,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                                 <Favorite />
                             </IconButton>
                             <Typography color="textSecondary" sx={{fontSize: 15}}>
-                                {reviews?.length ?? 0}
+                                {data?.totalReactions ?? 0}
                             </Typography>
                             </Box>
                             <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
