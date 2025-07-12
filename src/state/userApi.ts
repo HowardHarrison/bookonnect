@@ -32,7 +32,14 @@ export const userApi = createApi({
         { type: 'User', id: userId },
       ],
     }),
+    updateUser: builder.mutation<void, { userId: string | undefined; data: FormData }>({
+      query: ({ userId, data }) => ({
+        url: `/${userId}`,
+        method: 'PUT',
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetUserProfileQuery, useHandleSavedBookMutation } = userApi;
+export const { useGetUserProfileQuery, useHandleSavedBookMutation, useUpdateUserMutation } = userApi;

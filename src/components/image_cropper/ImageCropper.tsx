@@ -31,6 +31,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const cropWidth = aspectRatio === 1 / 2 ? 150 : 200;
   const cropHeight = aspectRatio === 1 / 2 ? 300 : 200;
 
+  console.log('imageSrc', imageSrc);
+
   const onCropChange = (newCrop: Point) => {
     setCrop(newCrop);
   };

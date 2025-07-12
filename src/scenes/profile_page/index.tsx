@@ -8,13 +8,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useGetSavedBooksQuery } from 'state/bookAPI';
-import { useGetUserProfileQuery, useHandleSavedBookMutation } from 'state/userApi';
+import { useGetUserProfileQuery, useHandleSavedBookMutation, useUpdateUserMutation } from 'state/userApi';
 import { BaseUrl } from 'types/Index';
 
 const ProfilePage = () => {
   const [previewImage, setPreviewImage] = useState<string | null>("");
   const [image, setImage] = useState<File | null>(null);
-  const editImage = false;
+  const [editImage, setEditImage] = useState(false);
   const maxBytes = 3145728;
   const [formValues, setFormValues] = useState({
     firstName: '',
@@ -25,11 +25,12 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const userId = useSelector((state: RootState) => state.auth.user?._id);
   const { data: user, isLoading, error, refetch: refetchUserProfile } = useGetUserProfileQuery(userId ?? '', { skip: !userId });
+  console.log('user', user);
   const [handleSavedBook] = useHandleSavedBookMutation();
   const [savedBookIds, setSavedBookIds] = useState<string[]>([]);
   const shouldFetch = Array.isArray(savedBookIds) && savedBookIds.length > 0;
   const { data: savedBooks, isLoading: booksLoading, refetch: refetchBooksByIds } = useGetSavedBooksQuery(savedBookIds,{skip: !shouldFetch});
-
+  const [updateUser] = useUpdateUserMutation();
   useEffect(() => {
     if (user) {
       setFormValues({
@@ -42,7 +43,8 @@ const ProfilePage = () => {
         setSavedBookIds(user.savedBooks);
       }
       if (user.profileImage) {
-        setPreviewImage(`/uploads/${user.profileImage}`);
+        setPreviewImage(user.profileImage);
+        setEditImage(true);
       }
     }
   }, [user]);
@@ -69,9 +71,21 @@ const ProfilePage = () => {
     setPreviewImage(URL.createObjectURL(file));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submitted:', formValues);
+    const formData = new FormData();
+    formData.append('firstName', formValues.firstName);
+    formData.append('lastName', formValues.lastName);
+    formData.append('email', formValues.email);
+    formData.append('password', formValues.password);
+    if (image) formData.append('profileImage', image);
+
+    try {
+      await updateUser({ userId, data: formData }).unwrap();
+      refetchUserProfile();
+    } catch (err) {
+      console.error('Update error:', err);
+    }
   };
 
   return (
@@ -105,7 +119,7 @@ const ProfilePage = () => {
                     label="Image"
                     maxSize={maxBytes}
                     accept={{ "image/*": [] }}
-                    file={image}
+                    file={previewImage}
                     setImage={(file) => setImage(file)}
                     onDrop={handleImageDrop}
                     cancelImage={cancelImage}
@@ -177,7 +191,7 @@ const ProfilePage = () => {
             </Box>
 
             <Box>
-              <Typography variant="h5" sx={{ mx: 2, mt: 1, fontSize: 20, textAlign: 'start' }}>
+              <Typography variant="h5" sx={{ mx: 2, mt: 3, fontSize: 20, textAlign: 'start' }}>
                 Saved Books
               </Typography>
               <List>

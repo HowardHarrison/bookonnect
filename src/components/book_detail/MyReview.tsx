@@ -21,6 +21,8 @@ import {
 } from "../../state/reviewApi";
 import { Delete, EditDocument, Star } from "@mui/icons-material";
 import dayjs from "dayjs";
+import { useGetUserProfileQuery } from "state/userApi";
+import { BaseUrl } from "types/Index";
 
 interface Props {
     bookId: string;
@@ -32,10 +34,10 @@ export type MyReviewRef = {
 
 const MyReview = forwardRef((props: Props, ref: ForwardedRef<MyReviewRef>) => {
         const { bookId } = props;
-        const user = useSelector((state: RootState) => state.auth.user);
-        const userId = user?._id;
-        const isAuth = Boolean(userId);
-
+        const isAuth = useSelector((state: RootState) => Boolean(state.auth.token));
+        const userId = useSelector((state: RootState) => state.auth.user?._id);
+        const { data: user, error, refetch: refetchUserProfile } = useGetUserProfileQuery(userId ?? '', { skip: !userId });
+       
         const { data: userReview, refetch } = useGetUserReviewQuery(
             { userId, bookId },
             { skip: !userId }
@@ -55,7 +57,6 @@ const MyReview = forwardRef((props: Props, ref: ForwardedRef<MyReviewRef>) => {
             }
         }, [isEditing]);
 
-        // console.log('rating', userReview?.rating);
         useEffect(() => {
             if (userReview?.comment) {
                 setNewComment(userReview.comment);
@@ -136,7 +137,7 @@ const MyReview = forwardRef((props: Props, ref: ForwardedRef<MyReviewRef>) => {
                             <Box key={userReview._id}>
                                 <Stack direction="row" spacing={2} alignItems="flex-start">
                                     <Avatar
-                                        src={user?.profileImage || ""}
+                                        src={user?.profileImage ? `${BaseUrl}/${user?.profileImage}` : ""}
                                         alt={user?.firstName || "Anonymous"}
                                     />
                                     <Box>

@@ -7,6 +7,7 @@ import { fData } from "../../utils/format-number";
 import ImageCropper from "./ImageCropper";
 import EditCropper from "./EditCropper";
 import UploadIllustration from "./Illustration";
+import { BaseUrl } from "types/Index";
 
 const DropZoneStyle = styled("div")(({ theme }: { theme: Theme }) => ({
   outline: "none",
@@ -32,7 +33,7 @@ const DropZoneStyle = styled("div")(({ theme }: { theme: Theme }) => ({
 interface UploadImageProps extends DropzoneOptions {
   label?: string;
   error?: boolean;
-  file: File | null;
+  file: string | null;
   setImage: (file: File) => void;
   cancelImage: () => void;
   reuploadImage: (file: File) => void;
@@ -109,7 +110,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
       {file ? (
         editImage ? (
           <EditCropper
-            imageSrc={URL.createObjectURL(file)}
+            imageSrc={file}
             onCropComplete={onCropComplete}
             setImage={setImage}
             croppedImage={croppedImage}
@@ -120,7 +121,7 @@ const UploadImage: React.FC<UploadImageProps> = ({
           />
         ) : (
           <ImageCropper
-            imageSrc={URL.createObjectURL(file)}
+            imageSrc={file}
             onCropComplete={onCropComplete}
             setImage={setImage}
             croppedImage={croppedImage}

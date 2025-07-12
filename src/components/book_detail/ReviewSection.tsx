@@ -3,6 +3,7 @@ import { useGetReviewsByBookQuery } from "../../state/reviewApi";
 import { Star } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { useEffect } from "react";
+import { BaseUrl } from "types/Index";
 
 type ReviewSectionProps = {
     bookId: string;
@@ -22,6 +23,7 @@ const ReviewSection = ({ bookId }: ReviewSectionProps) => {
             })) || [],
         }),
     });
+    console.log('reviews', reviews);
 
     if (isLoading) return <Typography>Loading reviews...</Typography>;
     if (error) return <Typography color="error">Failed to load reviews</Typography>;
@@ -29,7 +31,7 @@ const ReviewSection = ({ bookId }: ReviewSectionProps) => {
 
     return (
         <Box mt={4} px={2}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom> 
                 All Reviews
             </Typography>
 
@@ -37,7 +39,7 @@ const ReviewSection = ({ bookId }: ReviewSectionProps) => {
                 {reviews.map((review) => (
                     <Box key={review._id}>
                         <Stack direction="row" spacing={2}>
-                            <Avatar src={review.userId?.profileImage || ""} alt={review.userId?.firstName || "User"} />
+                            <Avatar src={review.userId?.profileImage ? `${BaseUrl}/${review.userId?.profileImage}` : ""} alt={review.userId?.firstName || "User"} />
                             <Box>
                                 <Typography variant="subtitle2" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                     {review.userId?.firstName || "Anonymous"}

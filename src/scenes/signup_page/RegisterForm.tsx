@@ -193,7 +193,7 @@ const RegisterForm = () => {
                 label="Image"
                 maxSize={maxBytes}
                 accept={{ "image/*": [] }}
-                file={image}
+                file={previewImage}
                 setImage={(file) => setImage(file)}
                 onDrop={handleImageDrop}
                 cancelImage={cancelImage}

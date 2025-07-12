@@ -1,6 +1,7 @@
 import { Box, Button, Slider, Typography } from "@mui/material";
 import { ChangeEvent, useCallback, useState } from "react";
 import Cropper, { Area, Point } from "react-easy-crop";
+import { BaseUrl } from "types/Index";
 
 interface EditCropperProps {
   imageSrc: string;
@@ -29,6 +30,9 @@ const EditCropper: React.FC<EditCropperProps> = ({
   const [newImage, addNewImage] = useState(false);
   const cropWidth = aspectRatio === 1 / 2 ? 150 : 200;
   const cropHeight = aspectRatio === 1 / 2 ? 300 : 200;
+
+  console.log('imageSrc', imageSrc);
+  console.log('croppedImage', croppedImage);
 
   const onCropChange = (newCrop: Point) => {
     setCrop(newCrop);
@@ -189,7 +193,13 @@ const EditCropper: React.FC<EditCropperProps> = ({
       <Box
         component="img"
         alt="file preview"
-        src={croppedImage ? croppedImage : imageSrc}
+        src={
+          croppedImage
+            ? croppedImage
+            : imageSrc.includes(BaseUrl)
+              ? imageSrc
+              : `${BaseUrl}/${imageSrc}`
+        }
         sx={{
           borderRadius: 1,
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
@@ -205,7 +215,8 @@ const EditCropper: React.FC<EditCropperProps> = ({
         <Button
           variant="contained"
           component="label"
-          style={{ marginTop: 20, marginBottom: 15 }}>
+          style={{ marginTop: 20, marginBottom: 15, backgroundColor: 'red' }}
+          color="error">
           Select New Image
           <input
             hidden
