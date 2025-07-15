@@ -17,7 +17,7 @@ export const reactionApi = createApi({
     }),
 
     getReactionStatus: builder.query<
-      { reacted: boolean; totalReactions: number },
+      { reacted: boolean },
       { userId?: string; bookId: string }
     >({
       query: ({ userId, bookId }) => ({
@@ -25,10 +25,20 @@ export const reactionApi = createApi({
       }),
       transformResponse: (response: any) => ({
         reacted: response.reacted,
+      }),
+    }),
+    getAllReactionStatus: builder.query<
+      { totalReactions: number },
+      { bookId: string }
+    >({
+      query: ({ bookId }) => ({
+        url: `/reactions/all?bookId=${bookId}`,
+      }),
+      transformResponse: (response: any) => ({
         totalReactions: response.totalReactions,
       }),
     }),
   }),
 });
 
-export const { useToggleReactionMutation, useGetReactionStatusQuery } = reactionApi;
+export const { useToggleReactionMutation, useGetReactionStatusQuery, useGetAllReactionStatusQuery } = reactionApi;

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "main";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { useToggleReactionMutation, useGetReactionStatusQuery } from "state/reactionApi";
+import { useToggleReactionMutation, useGetReactionStatusQuery, useGetAllReactionStatusQuery } from "state/reactionApi";
 import MyReview, { MyReviewRef } from "./MyReview";
 import ReviewSection from "./ReviewSection";
 import { useGetUserProfileQuery, useHandleSavedBookMutation } from "state/userApi";
@@ -43,6 +43,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
     const [toggleReaction] = useToggleReactionMutation();
     const [handleSavedBook] = useHandleSavedBookMutation();
     const { data, refetch } = useGetReactionStatusQuery({ userId, bookId: _id }, { skip: !userId });
+    const { data: reactionsNumber} = useGetAllReactionStatusQuery({bookId: _id});
     console.log('reaction status', data);
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -177,7 +178,7 @@ const BookDetail: React.FC<Book> = ({ _id, title, writer, categories, coverImage
                                 <Favorite />
                             </IconButton>
                             <Typography color="textSecondary" sx={{fontSize: 15}}>
-                                {data?.totalReactions ?? 0}
+                                {reactionsNumber?.totalReactions ?? 0}
                             </Typography>
                             </Box>
                             <IconButton sx={{ backgroundColor: '#EEEEEE' }} onClick={handleComment}>
