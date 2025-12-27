@@ -8,6 +8,7 @@ import ProfilePage from "scenes/profile_page";
 import Authors from "scenes/author_page";
 import AboutUs from "scenes/aboutus_page";
 import Categories from "scenes/categories_page";
+import { CommunityPage } from "scenes/community_page/CommunityPage";
 
 const Router = () => {
     return (
@@ -20,6 +21,7 @@ const Router = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/community" element={<CommunityPage/>} />
             <Route path="*" element={<Navigate to="/login" replace />} />
             <Route path="/not-found" element={<NotFound />} />
         </Routes>
